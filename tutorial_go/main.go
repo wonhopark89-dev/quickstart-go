@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"tutorial_go/something"
+)
 
 func main() {
-	 fmt.Println("Hello World")
+	fmt.Println("main")
+	something.SayHello()
+
 }
