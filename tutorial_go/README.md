@@ -33,3 +33,9 @@ func sample() {
     return
 }
 ```
+- range 는 인덱스 와 요소값을 반환
+```
+for index, number := range numbers {
+		fmt.Println(index, number)
+}
+```

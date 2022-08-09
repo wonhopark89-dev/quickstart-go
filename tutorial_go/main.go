@@ -29,7 +29,22 @@ func lenAndUpper2(name string) (length int, uppercase string) {
 func repeatMe(words ...string) {
 	fmt.Println(words)
 }
- 
+
+func superAdd(numbers ...int) int {
+	total := 0
+	
+	// for i := 0; i < len(numbers); i++ {
+	// 	fmt.Println(numbers[i])
+	// }
+	
+	// range 활용
+	for index, number := range numbers {
+		fmt.Println(index, number)
+		total += number
+	}
+	return total
+}
+
 func main() {
 	fmt.Println("main")
 
@@ -44,8 +59,10 @@ func main() {
 	totalLength3, upperName3 := lenAndUpper2("bye456")
 	fmt.Println(totalLength3, upperName3)
 
+	total := superAdd(1, 2, 3, 4, 5)
+	fmt.Println("sum:", total)
 
-	repeatMe("aa","bb","cc")
+	// repeatMe("aa","bb","cc")
 
 	something.SayHello()
 
