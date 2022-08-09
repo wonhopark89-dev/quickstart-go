@@ -26,3 +26,10 @@ func 안에서만 사용가능함, 변수에만 사용가능
 ```
 {sth} declared but not used
 ```
+- defer 는 함수가 끝나고 난 후에 실행된다
+```
+func sample() {
+    defer fmt.PrintLn("sample done")
+    return
+}
+```
