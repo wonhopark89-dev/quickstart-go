@@ -61,6 +61,32 @@ func canIDrink(age int) bool {
   return true
 }
 
+func canIDrink2(age int) bool {
+  // basic switch
+  // switch age {
+  //   case 10:
+  // return false
+  //   case 18:
+  // return true
+  // }
+  // return true
+  // ----------------------------
+  // 조건값에서 생략 후 case 문에서 판단
+  // switch {
+  //   case age < 18:
+  //     return false
+  //   return true
+  // }
+  // -------------------------------
+  switch koreanAge := age + 2; koreanAge {
+    case 18:
+      return false
+    case 50:
+      return true 
+  }
+  return true
+}
+
 func main() {
 	fmt.Println("main")
 

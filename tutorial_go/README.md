@@ -39,3 +39,21 @@ for index, number := range numbers {
 		fmt.Println(index, number)
 }
 ```
+
+- if, switch 각 분기문안에서만 사용할 수 있는 변수 선언이 가능
+```
+func sample(param1 int) bool {
+   
+  if param1 < 10 {
+    return false
+  }   
+  return true
+
+
+  if param2 := param1 + 5; param2 < 20 {
+    // param2 는 if 문 안에서만 사용할 수 있음
+    return false
+  }  
+  return true
+}
+```
