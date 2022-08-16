@@ -45,6 +45,22 @@ func superAdd(numbers ...int) int {
 	return total
 }
 
+func canIDrink(age int) bool {
+  // basic if 
+  // if age < 18 {
+  //   return false
+  // }   
+  // return true
+
+  // advanced if
+  // sampleAge := age + 3; // 함수 안에서 사용할 수 있음
+  if koreanAge := age + 2; koreanAge < 18 {
+    // koreanAge 는 if 문 안에서만 사용할 수 있음
+    return false
+  }  
+  return true
+}
+
 func main() {
 	fmt.Println("main")
 
@@ -77,4 +93,6 @@ func main() {
 	name3 := "john"
 	name3 = "jane"
 	fmt.Println(name3)
+
+  fmt.Println(canIDrink(16))
 }
