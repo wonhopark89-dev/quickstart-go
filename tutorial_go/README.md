@@ -63,3 +63,11 @@ a := 1
 b := a // 값 참조
 b := &a // 주소 참조
 ```
+
+- array and slice
+```
+names := [3]string{"a","b","c"} // array
+
+names := []string{"a","b","c"} // slice
+names = append(names, "d") // 추가 가능
+```
