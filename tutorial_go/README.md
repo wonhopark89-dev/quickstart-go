@@ -57,3 +57,9 @@ func sample(param1 int) bool {
   return true
 }
 ```
+- pointer
+```
+a := 1
+b := a // 값 참조
+b := &a // 주소 참조
+```
