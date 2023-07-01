@@ -1,0 +1,3 @@
+```
+struct making function pattern
+```
