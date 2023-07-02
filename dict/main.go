@@ -14,4 +14,8 @@ func main() {
 		fmt.Println(definition)
 	}
 
+	err2 := dictionary.Add("first", "Greeting")
+	if err2 != nil {
+		fmt.Println(err2)
+	}
 }
