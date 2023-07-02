@@ -3,7 +3,6 @@ package main
 import (
 	"banking/accounts"
 	"fmt"
-	"log"
 )
 
 func main() {
@@ -14,7 +13,9 @@ func main() {
 	fmt.Println(account.Balance())
 	err := account.Withdraw(20)
 	if err != nil {
-		log.Fatalln(err)
+		// log.Fatalln(err)
+		fmt.Println(err)
 	}
-	fmt.Println(account)
+	fmt.Println(account.Balance(), account.Owner())
+	fmt.Println(account.String())
 }
