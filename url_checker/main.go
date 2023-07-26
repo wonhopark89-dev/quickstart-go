@@ -36,9 +36,18 @@ func main() {
 	// 	fmt.Println(url, result)
 	// }
 
-	go helloCount("hello")
-	go helloCount("bye")
-	time.Sleep(time.Second * 5)
+	c := make(chan bool)
+	greetings := [2]string{"hello", "bye"}
+	for _, greeting := range greetings {
+		go isGreeting(greeting, c)
+	}
+	fmt.Println(<-c)
+	fmt.Println(<-c)
+	fmt.Println(<-c)
+
+	// go helloCount("hello")
+	// go helloCount("bye")
+	// time.Sleep(time.Second * 5)
 }
 
 func hitUrl(url string) error {
@@ -56,4 +65,10 @@ func helloCount(person string) {
 		fmt.Println(person, "is count", i)
 		time.Sleep(time.Second)
 	}
+}
+
+func isGreeting(person string, ch chan bool) {
+	time.Sleep(time.Second * 5)
+	fmt.Println(person, ch)
+	ch <- true
 }
