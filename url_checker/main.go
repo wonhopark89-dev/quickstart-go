@@ -7,54 +7,58 @@ import (
 	"time"
 )
 
-var errRequestFailed = errors.New("Request failed")
+var errRequestFailed = errors.New("request failed")
 
-func main() {
-	//  make: 빈배열 생성
-	// var results = make(map[string]string)
-	// urls := []string{
-	// 	"https://www.airbnb.com/",
-	// 	"https://www.google.com/",
-	// 	"https://www.amazon.com/",
-	// 	"https://www.reddit.com/",
-	// 	"https://www.google.com/",
-	// 	"https://soundcloud.com/",
-	// 	"https://www.facebook.com/",
-	// 	"https://www.instagram.com/",
-	// }
-
-	// for _, url := range urls {
-	// 	result := "OK"
-	// 	err := hitUrl(url)
-	// 	if err != nil {
-	// 		result = "FAILED"
-	// 	}
-	// 	results[url] = result
-	// }
-
-	// for url, result := range results {
-	// 	fmt.Println(url, result)
-	// }
-
-	c := make(chan string)
-	greetings := [5]string{"hello", "bye", "ccc", "ddd", "eee"}
-	for _, greeting := range greetings {
-		go isGreeting(greeting, c)
-	}
-
-	for i := 0; i < len(greetings); i++ {
-		fmt.Println(<-c)
-	}
+type requestResult struct {
+	url    string
+	status string
 }
 
-func hitUrl(url string) error {
-	fmt.Println("Checking: ", url)
-	resp, err := http.Get(url)
-	if err != nil || resp.StatusCode >= 400 {
-		fmt.Println(err, resp.StatusCode)
-		return errRequestFailed
+func main() {
+	// make: 빈배열 생성
+	// var results map[string]string = make(map[string]string)
+	results := make(map[string]string)
+	c := make(chan requestResult)
+	urls := []string{
+		"https://www.airbnb.com/",
+		"https://www.google.com/",
+		"https://www.amazon.com/",
+		"https://www.reddit.com/",
+		"https://www.google.com/",
+		"https://soundcloud.com/",
+		"https://www.facebook.com/",
+		"https://www.instagram.com/",
 	}
-	return nil
+
+	for _, url := range urls {
+		go hitUrl(url, c)
+	}
+
+	for i := 0; i < len(urls); i++ {
+		result := <-c
+		results[result.url] = result.status
+	}
+
+	for url, result := range results {
+		fmt.Println(url, result)
+	}
+
+	//c := make(chan string)
+	//greetings := [5]string{"hello", "bye", "ccc", "ddd", "eee"}
+	//for _, greeting := range greetings {
+	//	go isGreeting(greeting, c)
+	//}
+
+}
+
+// send only
+func hitUrl(url string, c chan<- requestResult) {
+	resp, err := http.Get(url)
+	status := "OK"
+	if err != nil || resp.StatusCode >= 400 {
+		status = "FAILED"
+	}
+	c <- requestResult{url: url, status: status}
 }
 
 func helloCount(person string) {
