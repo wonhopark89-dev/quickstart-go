@@ -59,6 +59,8 @@ func writeItems(items []extractedItem) {
 
 func getPage(page int) []extractedItem {
 	var items []extractedItem
+	c := make(chan extractedItem)
+
 	pageURL := baseUrl + "p=" + strconv.Itoa(page)
 	// fmt.Println("Requesting", pageURL)
 	res, err := http.Get(pageURL)
@@ -68,22 +70,39 @@ func getPage(page int) []extractedItem {
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	checkErr(err)
 
-	doc.Find(".product-cell-container").Each(func(i int, item *goquery.Selection) {
-		id, _ := item.Find(".product").Attr("itemid")
-
-		item.Find(".product-inner>div").Each(func(i int, item *goquery.Selection) {
-			content, exist := item.Find(".product-title").Attr("content")
-			if exist {
-				// fmt.Println(id, content)
-				items = append(items, extractedItem{
-					id:    id,
-					title: content,
-				})
-			}
-		})
-		// fmt.Println(id)
+	searchItems := doc.Find(".product-cell-container")
+	searchItems.Each(func(i int, item *goquery.Selection) {
+		// items = append(items, extractItem(item, c))
+		go extractItem(item, c)
 	})
+
+	for i := 0; i < searchItems.Length(); i++ {
+		item := <-c
+		items = append(items, item)
+	}
+
 	return items
+}
+
+func extractItem(item *goquery.Selection, c chan<- extractedItem) {
+	id, _ := item.Find(".product").Attr("itemid")
+
+	// title := item.Find(".product-inner>div").Each(func(i int, item *goquery.Selection) {
+	// 	content, exist := item.Find(".product-title").Attr("content")
+	// 	if exist {
+	// 		// fmt.Println(id, content)
+	// 		c <- extractedItem{
+	// 			id:    id,
+	// 			title: content,
+	// 	}
+	// )}
+
+	title, _ := item.Find(".product-inner>div").Find(".product-title").Attr("content")
+
+	c <- extractedItem{
+		id:    id,
+		title: title,
+	}
 }
 
 func getPages() int {

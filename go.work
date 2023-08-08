@@ -1,0 +1,9 @@
+go 1.20
+
+use (
+	./banking
+	./dict
+	./scrapper
+	./tutorial_go
+	./url_checker
+)
