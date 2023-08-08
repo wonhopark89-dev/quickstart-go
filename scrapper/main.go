@@ -1,11 +1,14 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 var baseUrl string = "https://kr.iherb.com/new-products?"
@@ -27,6 +30,31 @@ func main() {
 	for _, item := range items {
 		fmt.Println(item.id, item.title)
 	}
+
+	// write file
+	writeItems(items)
+	fmt.Println("Done, extracted", len(items))
+}
+
+func writeItems(items []extractedItem) {
+	file, err := os.Create("items.csv")
+	checkErr(err)
+
+	// 함수가 끝나는 시점에 파일에 데이터를 입력하는 함수
+	w := csv.NewWriter(file)
+	defer w.Flush()
+
+	headers := []string{"ID", "Title"}
+
+	wErr := w.Write(headers)
+	checkErr(wErr)
+
+	for _, item := range items {
+		itemSlice := []string{item.id, item.title}
+		itemErr := w.Write(itemSlice)
+		checkErr(itemErr)
+	}
+
 }
 
 func getPage(page int) []extractedItem {
