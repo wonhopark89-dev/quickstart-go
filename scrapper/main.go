@@ -20,10 +20,17 @@ type extractedItem struct {
 
 func main() {
 	var items []extractedItem
+	c := make(chan []extractedItem)
 	totalPage := getPages()
 
 	for i := 1; i <= totalPage; i++ {
-		items = append(items, getPage(i)...)
+		// items = append(items, getPage(i)...)
+		go getPage(i, c)
+	}
+
+	for i := 0; i < totalPage; i++ {
+		extractedItems := <-c
+		items = append(items, extractedItems...)
 	}
 
 	// fmt.Println(items)
@@ -57,7 +64,7 @@ func writeItems(items []extractedItem) {
 
 }
 
-func getPage(page int) []extractedItem {
+func getPage(page int, mainChannel chan<- []extractedItem) {
 	var items []extractedItem
 	c := make(chan extractedItem)
 
@@ -66,6 +73,8 @@ func getPage(page int) []extractedItem {
 	res, err := http.Get(pageURL)
 	checkErr(err)
 	checkCode(res)
+
+	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	checkErr(err)
@@ -81,7 +90,8 @@ func getPage(page int) []extractedItem {
 		items = append(items, item)
 	}
 
-	return items
+	// return items
+	mainChannel <- items
 }
 
 func extractItem(item *goquery.Selection, c chan<- extractedItem) {
