@@ -1,6 +1,7 @@
 package scrapper
 
 import (
+	"database/sql"
 	"encoding/csv"
 	"fmt"
 	"log"
@@ -9,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 // var baseUrl = "https://kr.iherb.com/search?kw=%EB%B9%84%ED%83%80%EB%AF%BC&"
@@ -20,6 +22,17 @@ type extractedItem struct {
 
 // Scrape iherb by a term
 func Scrape(term string) {
+	db, err := sql.Open("sqlite3", "./iherb.db")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+	db.Exec("CREATE TABLE `iherb_db` (`id` varchar(50) NOT NULL, `title` varchar(200) NOT NULL, PRIMARY KEY (`id`))")
+	db.Exec("INSERT INTO `iherb_db` (`id`, `title`) VALUES ('1', 'test1')")
+	db.Exec("INSERT INTO `iherb_db` (`id`, `title`) VALUES ('2', 'test2')")
+
 	var baseUrl = "https://kr.iherb.com/search?kw=" + term + "&"
 	var items []extractedItem
 	c := make(chan []extractedItem)
@@ -38,11 +51,24 @@ func Scrape(term string) {
 	// fmt.Println(items)
 	for _, item := range items {
 		fmt.Println(item.id, item.title)
+		db.Exec("INSERT INTO `iherb_db` (`id`, `title`) VALUES (?,?)", item.id, item.title)
 	}
 
 	// write file
 	writeItems(items)
 	fmt.Println("Done, extracted", len(items))
+
+	rows, dbErr := db.Query("SELECT * FROM `iherb_db`")
+	if dbErr != nil {
+		log.Fatal(dbErr)
+	}
+
+	var id string
+	var title string
+	for rows.Next() {
+		rows.Scan(&id, &title)
+		fmt.Println("db", id, title)
+	}
 }
 
 func writeItems(items []extractedItem) {
